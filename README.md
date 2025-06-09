@@ -8,7 +8,8 @@ Set up Elasticsearch locally with all CSV files ingested for patent data analysi
 - **patent_people**: People and organization/company data  
 - **patent_claims**: Claim sequence and claim data
 - **patent_summary**: Brief summary of patents
-- **patent_citation**STUFFF**: US Patent Citations 
+
+**⚠️ MISSING: Citation Data**
 
 ## Elasticsearch Indices
 
@@ -47,27 +48,378 @@ curl -X GET "http://localhost:9200/patentsview/_search?pretty" \
   }'
 ```
 
-## Key Fields Available for Querying
+## Complete Elasticsearch Mappings
 
-### Main Patent Data (`patentsview` index)
-- `patent_id` (keyword)
-- `patent_title` (text)
-- `patent_abstract` (text)
-- `patent_date` (date)
-- `patent_type` (keyword)
-- `num_claims` (integer)
-- `claims_text` (text)
-- `summary` (text)
+```bash
+curl localhost:9200/_mapping?pretty
+```
 
-### Nested Objects
-- **`people`**: Inventors, assignees, applicants
-  - `inventor_full_name`, `assignee_organization`, `gender_code`
-- **`cpc_classes`**: Patent classifications
-  - `cpc_class`, `cpc_class_title`, `cpc_section`, `cpc_group`
-- **`claims`**: Individual patent claims
-  - `claim_text`, `claim_number`, `dependent`, `exemplary`
-- **`us_citations`** & **`us_app_citations`**: Citation data
-  - `citation_document_number`, `citation_category`, `citation_date`
+```json
+{
+  "us_citations" : {
+    "mappings" : {
+      "properties" : {
+        "citation_category" : {
+          "type" : "keyword"
+        },
+        "citation_date" : {
+          "type" : "date"
+        },
+        "citation_document_number" : {
+          "type" : "keyword"
+        },
+        "citation_sequence" : {
+          "type" : "integer"
+        },
+        "patent_id" : {
+          "type" : "keyword"
+        },
+        "record_name" : {
+          "type" : "text"
+        },
+        "wipo_kind" : {
+          "type" : "keyword"
+        }
+      }
+    }
+  },
+  "claim_tmp" : {
+    "mappings" : {
+      "properties" : {
+        "claim_number" : {
+          "type" : "integer"
+        },
+        "claim_sequence" : {
+          "type" : "integer"
+        },
+        "claim_text" : {
+          "type" : "text"
+        },
+        "dependent" : {
+          "type" : "boolean"
+        },
+        "exemplary" : {
+          "type" : "boolean"
+        },
+        "patent_id" : {
+          "type" : "keyword"
+        }
+      }
+    }
+  },
+  "patent_people_tmp" : {
+    "mappings" : {
+      "properties" : {
+        "applicant_authority" : {
+          "type" : "keyword"
+        },
+        "applicant_full_name" : {
+          "type" : "text"
+        },
+        "applicant_organization" : {
+          "type" : "text"
+        },
+        "assignee_full_name" : {
+          "type" : "text"
+        },
+        "assignee_id" : {
+          "type" : "keyword"
+        },
+        "assignee_organization" : {
+          "type" : "text"
+        },
+        "gender_code" : {
+          "type" : "keyword"
+        },
+        "inventor_full_name" : {
+          "type" : "text"
+        },
+        "inventor_id" : {
+          "type" : "keyword"
+        },
+        "patent_id" : {
+          "type" : "keyword"
+        }
+      }
+    }
+  },
+  "patent_summary_tmp" : {
+    "mappings" : {
+      "properties" : {
+        "patent_id" : {
+          "type" : "keyword"
+        },
+        "summary" : {
+          "type" : "text",
+          "fields" : {
+            "keyword" : {
+              "type" : "keyword",
+              "ignore_above" : 256
+            }
+          },
+          "analyzer" : "standard"
+        }
+      }
+    }
+  },
+  "patentsview" : {
+    "mappings" : {
+      "properties" : {
+        "claims" : {
+          "type" : "nested",
+          "properties" : {
+            "claim_number" : {
+              "type" : "integer"
+            },
+            "claim_sequence" : {
+              "type" : "integer"
+            },
+            "claim_text" : {
+              "type" : "text"
+            },
+            "dependent" : {
+              "type" : "boolean"
+            },
+            "exemplary" : {
+              "type" : "boolean"
+            }
+          }
+        },
+        "claims_text" : {
+          "type" : "text"
+        },
+        "cpc_classes" : {
+          "type" : "nested",
+          "properties" : {
+            "cpc_class" : {
+              "type" : "keyword"
+            },
+            "cpc_class_title" : {
+              "type" : "text"
+            },
+            "cpc_group" : {
+              "type" : "keyword"
+            },
+            "cpc_group_title" : {
+              "type" : "text"
+            },
+            "cpc_section" : {
+              "type" : "keyword"
+            },
+            "cpc_subclass" : {
+              "type" : "keyword"
+            },
+            "cpc_type" : {
+              "type" : "keyword"
+            }
+          }
+        },
+        "num_claims" : {
+          "type" : "integer"
+        },
+        "patent_abstract" : {
+          "type" : "text"
+        },
+        "patent_date" : {
+          "type" : "date"
+        },
+        "patent_id" : {
+          "type" : "keyword"
+        },
+        "patent_title" : {
+          "type" : "text"
+        },
+        "patent_type" : {
+          "type" : "keyword"
+        },
+        "people" : {
+          "type" : "nested",
+          "properties" : {
+            "applicant_authority" : {
+              "type" : "keyword"
+            },
+            "applicant_full_name" : {
+              "type" : "text"
+            },
+            "applicant_organization" : {
+              "type" : "text"
+            },
+            "assignee_full_name" : {
+              "type" : "text"
+            },
+            "assignee_id" : {
+              "type" : "keyword"
+            },
+            "assignee_organization" : {
+              "type" : "text"
+            },
+            "gender_code" : {
+              "type" : "keyword"
+            },
+            "inventor_full_name" : {
+              "type" : "text"
+            },
+            "inventor_id" : {
+              "type" : "keyword"
+            },
+            "patent_id" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            }
+          }
+        },
+        "summary" : {
+          "type" : "text"
+        },
+        "us_app_citations" : {
+          "type" : "nested",
+          "properties" : {
+            "citation_category" : {
+              "type" : "keyword"
+            },
+            "citation_date" : {
+              "type" : "date"
+            },
+            "citation_document_number" : {
+              "type" : "keyword"
+            },
+            "citation_sequence" : {
+              "type" : "integer"
+            },
+            "record_name" : {
+              "type" : "text"
+            },
+            "wipo_kind" : {
+              "type" : "keyword"
+            }
+          }
+        },
+        "us_citations" : {
+          "type" : "nested",
+          "properties" : {
+            "citation_category" : {
+              "type" : "keyword"
+            },
+            "citation_date" : {
+              "type" : "date"
+            },
+            "citation_document_number" : {
+              "type" : "keyword"
+            },
+            "citation_sequence" : {
+              "type" : "integer"
+            },
+            "record_name" : {
+              "type" : "text"
+            },
+            "wipo_kind" : {
+              "type" : "keyword"
+            }
+          }
+        }
+      }
+    }
+  },
+  "patent_tmp_20250529_120045" : {
+    "mappings" : {
+      "properties" : {
+        "num_claims" : {
+          "type" : "integer"
+        },
+        "patent_abstract" : {
+          "type" : "text",
+          "fields" : {
+            "keyword" : {
+              "type" : "keyword",
+              "ignore_above" : 256
+            }
+          }
+        },
+        "patent_date" : {
+          "type" : "date"
+        },
+        "patent_id" : {
+          "type" : "keyword"
+        },
+        "patent_title" : {
+          "type" : "text",
+          "fields" : {
+            "keyword" : {
+              "type" : "keyword",
+              "ignore_above" : 256
+            }
+          }
+        },
+        "patent_type" : {
+          "type" : "keyword"
+        }
+      }
+    }
+  },
+  "cpc_classes_tmp" : {
+    "mappings" : {
+      "properties" : {
+        "cpc_class" : {
+          "type" : "keyword"
+        },
+        "cpc_class_title" : {
+          "type" : "text"
+        },
+        "cpc_group" : {
+          "type" : "keyword"
+        },
+        "cpc_group_title" : {
+          "type" : "text"
+        },
+        "cpc_section" : {
+          "type" : "keyword"
+        },
+        "cpc_subclass" : {
+          "type" : "keyword"
+        },
+        "cpc_type" : {
+          "type" : "keyword"
+        },
+        "patent_id" : {
+          "type" : "keyword"
+        }
+      }
+    }
+  },
+  "us_app_citation_tmp" : {
+    "mappings" : {
+      "properties" : {
+        "citation_category" : {
+          "type" : "keyword"
+        },
+        "citation_date" : {
+          "type" : "date"
+        },
+        "citation_document_number" : {
+          "type" : "keyword"
+        },
+        "citation_sequence" : {
+          "type" : "integer"
+        },
+        "patent_id" : {
+          "type" : "keyword"
+        },
+        "record_name" : {
+          "type" : "text"
+        },
+        "wipo_kind" : {
+          "type" : "keyword"
+        }
+      }
+    }
+  }
+}
+```
 
 ## Setup Instructions
 
@@ -92,7 +444,5 @@ curl localhost:9200/patentsview/_mapping?pretty
 
 ## Technical Details
 - **Elasticsearch Version**: 8.17.2
-- **Cluster Name**: elasticsearch
-- **Node Name**: tji-alienware
 - **Total Data Size**: ~85GB across all indices
 - **Index Status**: All indices show "yellow" health (single node setup)
