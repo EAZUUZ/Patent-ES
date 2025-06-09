@@ -441,7 +441,25 @@ curl localhost:9200/patentsview/_search?pretty
 curl localhost:9200/patentsview/_mapping?pretty
 ```
 
+## Repository Structure
+
+```
+Patent-ES/
+├── README.md                    # Main documentation
+├── patents_index/              # Index configuration files
+├── patent-system/              # Complete patent analysis system
+│   ├── backend/               # API backend service
+│   ├── frontend/             # Web interface
+│   ├── data/                 # Data processing scripts
+│   ├── docker-compose.yml    # Docker configuration
+│   └── README.md            # Patent system documentation
+└── scripts/                   # Elasticsearch utilities
+```
+
 ## Technical Details
 - **Elasticsearch Version**: 8.17.2
 - **Total Data Size**: ~85GB across all indices
 - **Index Status**: All indices show "yellow" health (single node setup)
+
+## Patent Analysis System
+See `patent-system/README.md` for complete documentation of the web application and API.

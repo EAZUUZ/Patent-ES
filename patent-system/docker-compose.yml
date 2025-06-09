@@ -1,0 +1,25 @@
+version: '3'
+services:
+  backend:
+    build: ./backend
+    container_name: patent-api
+    ports:
+      - "5000:5000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - patent-network
+
+  frontend:
+    build: ./frontend
+    container_name: patent-ui
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - patent-network
+
+networks:
+  patent-network:
+    driver: bridge
