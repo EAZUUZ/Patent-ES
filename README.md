@@ -9,7 +9,6 @@ Set up Elasticsearch locally with all CSV files ingested for patent data analysi
 - **patent_claims**: Claim sequence and claim data
 - **patent_summary**: Brief summary of patents
 
-**⚠️ MISSING: Citation Data**
 
 ## Elasticsearch Indices
 
