@@ -459,7 +459,6 @@ Patent-ES/
 ## Technical Details
 - **Elasticsearch Version**: 8.17.2
 - **Total Data Size**: ~85GB across all indices
-- **Index Status**: All indices show "yellow" health (single node setup)
 
 ## Patent Analysis System
 See `patent-system/README.md` for complete documentation of the web application and API.
